@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.snake"
+    namespace = "com.justsnake.noad"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -12,7 +12,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.snake"
+        applicationId = "com.justsnake.noad"
         minSdk = 29
         targetSdk = 36
         versionCode = 1
@@ -28,6 +28,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
