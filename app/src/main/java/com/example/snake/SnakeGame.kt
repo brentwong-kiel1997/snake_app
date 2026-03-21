@@ -3,6 +3,7 @@ package com.example.snake
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -13,10 +14,12 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import kotlin.math.abs
 
 @Composable
 fun SnakeGame(
@@ -30,6 +33,12 @@ fun SnakeGame(
     var lastDragY by remember { mutableStateOf(0f) }
     var hasMoved by remember { mutableStateOf(false) }
     var isGameOverSaved by remember { mutableStateOf(false) }
+    
+    // 边缘滑动返回
+    var edgeSwipeStarted by remember { mutableStateOf(false) }
+    var edgeSwipeDistance by remember { mutableStateOf(0f) }
+    val edgeWidthPx = 120 // 边缘区域宽度（像素）
+    val minSwipeDistance = 100 // 最小滑动距离才触发返回
 
     // 最小拖动距离阈值
     val minDragDistance = 30f
@@ -54,7 +63,40 @@ fun SnakeGame(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF1A1A2E))
-            .padding(16.dp),
+            .padding(16.dp)
+            .pointerInput(Unit) {
+                detectHorizontalDragGestures(
+                    onDragStart = { offset ->
+                        // 检测是否从左边缘开始滑动
+                        if (offset.x < edgeWidthPx) {
+                            edgeSwipeStarted = true
+                            edgeSwipeDistance = 0f
+                        }
+                    },
+                    onDragEnd = {
+                        // 只有从左边缘滑动且滑动距离超过阈值时才触发返回
+                        if (edgeSwipeStarted && edgeSwipeDistance > minSwipeDistance) {
+                            // 保存当前分数
+                            if (gameState.score > 0 && !gameState.gameOver) {
+                                scoreManager.saveScore(gameState.score)
+                            }
+                            onBack()
+                        }
+                        edgeSwipeStarted = false
+                        edgeSwipeDistance = 0f
+                    },
+                    onDragCancel = {
+                        edgeSwipeStarted = false
+                        edgeSwipeDistance = 0f
+                    },
+                    onHorizontalDrag = { change, dragAmount ->
+                        if (edgeSwipeStarted) {
+                            edgeSwipeDistance += abs(dragAmount)
+                            change.consume()
+                        }
+                    }
+                )
+            },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // 顶部栏
@@ -69,11 +111,11 @@ fun SnakeGame(
                     containerColor = Color(0xFF4A4A6A)
                 )
             ) {
-                Text("← 返回")
+                Text(stringResource(R.string.back))
             }
             
             Text(
-                text = "分数: ${gameState.score}",
+                text = stringResource(R.string.score, gameState.score),
                 color = Color(0xFFFFD700),
                 fontSize = 24.sp
             )
@@ -83,7 +125,7 @@ fun SnakeGame(
 
         // 标题
         Text(
-            text = "贪吃蛇",
+            text = stringResource(R.string.game_title),
             color = Color.White,
             fontSize = 32.sp,
             modifier = Modifier.padding(bottom = 8.dp)
@@ -187,13 +229,13 @@ fun SnakeGame(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "游戏结束!",
+                            text = stringResource(R.string.game_over),
                             color = Color.Red,
                             fontSize = 40.sp
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "最终分数: ${gameState.score}",
+                            text = stringResource(R.string.final_score, gameState.score),
                             color = Color.White,
                             fontSize = 24.sp
                         )
@@ -207,7 +249,7 @@ fun SnakeGame(
                                 containerColor = Color(0xFF00FF00)
                             )
                         ) {
-                            Text("重新开始", color = Color.Black)
+                            Text(stringResource(R.string.restart), color = Color.Black)
                         }
                     }
                 }
@@ -216,7 +258,7 @@ fun SnakeGame(
 
         // 操作提示
         Text(
-            text = "← 滑动屏幕控制方向 →",
+            text = stringResource(R.string.swipe_hint),
             color = Color.Gray,
             fontSize = 14.sp,
             textAlign = TextAlign.Center,
@@ -234,7 +276,7 @@ fun SnakeGame(
                 containerColor = Color(0xFF4A4A6A)
             )
         ) {
-            Text("重新开始")
+            Text(stringResource(R.string.restart))
         }
     }
 }

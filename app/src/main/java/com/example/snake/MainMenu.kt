@@ -1,5 +1,6 @@
 package com.example.snake
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -35,7 +37,7 @@ fun MainMenu(
     ) {
         // 标题
         Text(
-            text = "🐍 贪吃蛇",
+            text = stringResource(R.string.title_snake),
             color = Color(0xFF00FF00),
             fontSize = 48.sp,
             fontWeight = FontWeight.Bold,
@@ -58,7 +60,7 @@ fun MainMenu(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "最高分",
+                    text = stringResource(R.string.high_score),
                     color = Color.Gray,
                     fontSize = 16.sp
                 )
@@ -84,7 +86,7 @@ fun MainMenu(
             )
         ) {
             Text(
-                text = "开始游戏",
+                text = stringResource(R.string.start_game),
                 color = Color.Black,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
@@ -104,12 +106,13 @@ fun MainMenu(
             )
         ) {
             Text(
-                text = "历史记录",
+                text = stringResource(R.string.history),
                 color = Color.White,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
         }
+
     }
 }
 
@@ -140,7 +143,7 @@ fun HistoryScreen(
                     containerColor = Color(0xFF4A4A6A)
                 )
             ) {
-                Text("← 返回")
+                Text(stringResource(R.string.back))
             }
         }
 
@@ -148,7 +151,7 @@ fun HistoryScreen(
 
         // 标题
         Text(
-            text = "🏆 历史记录",
+            text = stringResource(R.string.history_title),
             color = Color.White,
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
@@ -174,7 +177,7 @@ fun HistoryScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "最高分",
+                    text = stringResource(R.string.high_score),
                     color = Color.Gray,
                     fontSize = 16.sp
                 )
@@ -192,7 +195,7 @@ fun HistoryScreen(
         // 历史记录列表
         if (history.isEmpty()) {
             Text(
-                text = "暂无游戏记录",
+                text = stringResource(R.string.no_records),
                 color = Color.Gray,
                 fontSize = 18.sp,
                 modifier = Modifier
@@ -202,7 +205,7 @@ fun HistoryScreen(
             )
         } else {
             Text(
-                text = "游戏记录",
+                text = stringResource(R.string.game_records),
                 color = Color.White,
                 fontSize = 18.sp,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -227,7 +230,7 @@ fun HistoryScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "第 ${index + 1} 名",
+                                text = stringResource(R.string.rank_format, index + 1),
                                 color = when (index) {
                                     0 -> Color(0xFFFFD700)
                                     1 -> Color(0xFFC0C0C0)
@@ -238,7 +241,7 @@ fun HistoryScreen(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "$score 分",
+                                text = stringResource(R.string.score_format, score),
                                 color = Color(0xFF00FF00),
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold
